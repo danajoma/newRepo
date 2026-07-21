@@ -1,0 +1,57 @@
+# Internship Management System
+
+## 1. Project Overview
+Internship Management System is a full-stack web application designed to manage internship programs. The system connects administrators, supervisors, and interns to organize training projects, tasks, submissions, attendance, feedback, and evaluations.
+## 2. Problem Statement
+Managing internship programs manually can cause difficulties in tracking tasks, monitoring intern progress, recording attendance, and providing feedback. This system provides a centralized platform to simplify internship management.
+
+## 3. Project Scope
+Included Features:
+User authentication and authorization.
+User profile management.
+Project management.
+Weekly task assignment.
+Task submission.
+Feedback management.
+Attendance tracking.
+Intern evaluation.
+Progress dashboard.
+## 4. System Users and Roles
+Admin :Manage users, projects, and system data        
+Supervisor :Assign tasks, review submissions, give feedback
+Intern  : Complete tasks, submit work, view progress     
+
+## 5. Functional Requirements
+Authentication
+The system shall allow users to register and login.
+The system shall support role-based authorization.
+User Management
+The administrator shall manage users.
+Task Management
+Supervisors shall create and assign tasks.
+Interns shall submit completed tasks.
+Feedback and Evaluation
+Supervisors shall provide feedback.
+Supervisors shall evaluate interns.
+
+## 6. Non-Functional Requirements
+Security
+Passwords must be encrypted.
+Authentication must use JWT.
+Performance
+The system should provide fast API responses.
+Maintainability
+The code should follow a clean project structure.
+Scalability
+The system should support increasing numbers of users.
+## 7. User Stories
+Admin: As an Admin,
+I want to manage users,
+so that I can control access to the system.
+Supervisor : As a Supervisor,
+I want to assign weekly tasks,
+so that interns know their responsibilities.
+Intern : As an Intern,
+I want to submit my tasks,
+so that my supervisor can review my work.
+
