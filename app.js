@@ -9,7 +9,7 @@ res.json({
 }) ; 
 
 });
-const students = [
+let students = [
     {
         id: 1,
         name: "Dana",
