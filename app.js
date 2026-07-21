@@ -54,6 +54,38 @@ res.json(Student);
 
 });
 
+
+app.delete("/students/:id",(req,res)=>{
+ const id = req.params.id;
+
+students = students.filter(
+  student => student.id != id
+);
+
+    res.json({
+        message:"Student deleted"
+    });
+
+});
+
+app.put("/students/:id",(req,res)=>{
+const id = req.params.id;
+
+    const student = students.find(
+        student => student.id == id
+    );
+
+student.name = req.body.name;
+student.age = req.body.age;
+
+    res.json({
+        message:"Student updated",
+        student
+    });
+
+});
+
+
 app.listen(3000, ()=>{
     console.log("the Server is running now on port 3000");
 });
