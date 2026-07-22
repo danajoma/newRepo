@@ -1,0 +1,35 @@
+1. HTTP Methods (HTTP Verbs)
+HTTP methods indicate the intended action to be performed on a resource, corresponding to CRUD operations:
+
+Method	   Operation	                      Description	                                        Example
+GET	         Read	                   Retrieves data from the server without modifying it.	    Fetching a list of patients
+POST	     Create	                  Submits data to create a new resource in the database.    Adding a new patient
+PUT	         Update	                  Updates and completely replaces an existing resource. 	Updating all details of a patient
+PATCH	     Update	                  Performs a partial update on an existing resource.	    Updating only a patient's phone number
+DELETE	     Delete	                  Removes a specific resource from the database.	        Deleting a patient record
+
+
+
+2. HTTP Status Codes
+Status codes express the result of the request sent by the client to the backend. They are categorized into 5 standard classes:
+
+A. Success (2xx)
+200 OK: The request succeeded and data was returned (commonly used with GET, PUT, PATCH).
+
+201 Created: The request succeeded and a new resource was successfully created (used with POST).
+
+204 No Content: The request succeeded, but there is no content to return in the response body (commonly used with DELETE).
+
+B. Client Errors (4xx)
+400 Bad Request: The request payload is malformed, invalid, or missing required fields.
+
+401 Unauthorized: Authentication is required (the user needs to log in first).
+
+403 Forbidden: The server understands the request, but the user lacks the required permissions.
+
+404 Not Found: The requested resource or URL endpoint does not exist.
+
+C. Server Errors (5xx)
+500 Internal Server Error: An unexpected error occurred on the server side (e.g., code crash or bug).
+
+503 Service Unavailable: The server is temporarily unable to handle the request (e.g., maintenance or overload).
