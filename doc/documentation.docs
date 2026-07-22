@@ -28,17 +28,43 @@ Intern  : Complete tasks, submit work, view progress
 
 
 ## 5. Functional Requirements
-Authentication
-The system shall allow users to register and login.
-The system shall support role-based authorization.
-User Management
-The administrator shall manage users.
-Task Management
-Supervisors shall create and assign tasks.
-Interns shall submit completed tasks.
-Feedback and Evaluation
-Supervisors shall provide feedback.
-Supervisors shall evaluate interns.
+5.1 Common Requirements (Applicable to All Users):
+
+1.The system shall allow users to register for a new account.
+2.The system shall allow users to log in securely.
+3.The system shall verify the user's email address by sending a verification code during registration.
+4.The system shall allow users to update their profile information.
+5.The system shall support role-based authentication and authorization.
+
+5.2 Administrator Requirements:
+1.The administrator shall create, update, and delete user accounts.
+2.The administrator shall assign or change user roles (Administrator, Supervisor, or Intern).
+3.The administrator shall approve or reject supervisor registration requests.
+4.The administrator shall create internship projects directly.
+5.The administrator shall create, update, and delete project information.
+6.The administrator shall assign supervisors to projects.
+7.The administrator shall view summary reports, such as the number of tasks assigned to each user and other system statistics.
+8.The administrator shall manage user permissions.
+
+
+5.3 Supervisor Requirements
+
+1.The supervisor shall create internship projects that require administrator approval before becoming active.
+2.The supervisor shall create, update, and manage tasks.
+3.The supervisor shall assign tasks to interns.
+4.The supervisor shall review task submissions.
+5.The supervisor shall provide feedback and ratings for submitted tasks.
+6.The supervisor shall monitor interns' attendance records.
+7.The supervisor shall track the status of assigned tasks (e.g., New, In Progress, Completed).
+8.The supervisor shall define the start date and deadline for each task.
+
+5.4 Intern Requirements
+1.The intern shall view assigned tasks.
+2.The intern shall update the status of assigned tasks.
+3.The intern shall upload task submissions.
+4.The intern shall be allowed to resubmit tasks multiple times before the deadline.
+5.The intern shall view supervisor feedback and ratings.
+6.The intern shall reply to supervisor feedback through the system.
 
 
 ## 6. Non-Functional Requirements

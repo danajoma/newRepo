@@ -42,6 +42,7 @@ res.json({
 
 
 app.get("/students", (req,res)=>{
+    const students = await prisma.Student.findMany();
     res.json(students);
 });
 
