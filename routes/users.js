@@ -30,4 +30,31 @@ router.get("/", async (req, res) => {
 });
 
 
+
+// CREATE USER
+router.post("/", async (req, res) => {
+
+    try {
+
+        const user = await prisma.users.create({
+            data: {
+                name: req.body.name,
+                email: req.body.email,
+                password: req.body.password,
+                role: req.body.role
+            }
+        });
+
+        res.json(user);
+
+    } catch (error) {
+
+        res.status(500).json({
+            error: error.message
+        });
+
+    }
+
+});
+
 module.exports = router;

@@ -22,7 +22,12 @@ const projectRoutes = require("./routes/projects");
 
 app.use("/projects", projectRoutes);
 
+const admintRoutes = require("./routes/admins");
+
+app.use("/admins", admintRoutes);
+
 app.listen(3000,()=>{
     console.log("Server running on port 3000");
 });
+
 

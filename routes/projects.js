@@ -59,20 +59,20 @@ router.post("/", async (req,res)=>{
 
     try {
 
-        const project = await prisma.projects.create({
-
-            data:{
-                name:req.body.name,
-                description:req.body.description
-            }
-
-        });
-
+      const project = await prisma.projects.create({
+    data:{
+        created_by_admin_id: req.body.created_by_admin_id,
+        supervisor_id: req.body.supervisor_id,
+        title: req.body.title,
+        description: req.body.description,
+        start_date: new Date(req.body.start_date),
+        end_date: new Date(req.body.end_date)
+    }
+});
 
         res.json(project);
 
-
-    }catch(error){
+    } catch(error){
 
         res.status(500).json({
             error:error.message
