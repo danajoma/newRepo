@@ -18,7 +18,12 @@ const prisma = new PrismaClient({
 // GET ALL PROJECTS
 router.get("/", async (req, res) => {
     try {
-        const projects = await prisma.projects.findMany();
+       const projects = await prisma.projects.findMany({
+    include: {
+        admin: true,
+        supervisor: true
+    }
+});
 
         res.json(projects);
 
@@ -35,11 +40,16 @@ router.get("/:id", async (req, res) => {
 
     try {
 
-        const project = await prisma.projects.findUnique({
-            where: {
-                id: Number(req.params.id)
-            }
-        });
+       const project = await prisma.projects.findUnique({
+    where: {
+        id: Number(req.params.id)
+    },
+    include: {
+        admin: true,
+        supervisor: true,
+        tasks: true
+    }
+});
 
         res.json(project);
 
