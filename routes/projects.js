@@ -1,4 +1,5 @@
 const express = require("express");
+
 const router = express.Router();
 
 const { PrismaClient } = require("../generated/prisma");
@@ -15,45 +16,74 @@ const prisma = new PrismaClient({
 });
 
 
+// ===============================
 // GET ALL PROJECTS
+// ===============================
+
 router.get("/", async (req, res) => {
+
     try {
-       const projects = await prisma.projects.findMany({
-    include: {
-        admin: true,
-        supervisor: true
-    }
-});
+
+        const projects = await prisma.projects.findMany({
+            include: {
+                admin: true,
+                supervisor: true,
+                tasks: true
+            }
+        });
 
         res.json(projects);
 
+
     } catch (error) {
+
         res.status(500).json({
             error: error.message
         });
+
     }
+
 });
 
 
+
+
+// ===============================
 // GET PROJECT BY ID
+// ===============================
+
 router.get("/:id", async (req, res) => {
 
     try {
 
-       const project = await prisma.projects.findUnique({
-    where: {
-        id: Number(req.params.id)
-    },
-    include: {
-        admin: true,
-        supervisor: true,
-        tasks: true
-    }
-});
+        const project = await prisma.projects.findUnique({
+
+            where: {
+                id: Number(req.params.id)
+            },
+
+            include: {
+                admin: true,
+                supervisor: true,
+                tasks: true
+            }
+
+        });
+
+
+        if (!project) {
+
+            return res.status(404).json({
+                error: "Project not found"
+            });
+
+        }
+
 
         res.json(project);
 
-    } catch(error) {
+
+    } catch (error) {
 
         res.status(500).json({
             error: error.message
@@ -64,49 +94,32 @@ router.get("/:id", async (req, res) => {
 });
 
 
+
+
+// ===============================
 // CREATE PROJECT
-router.post("/", async (req,res)=>{
+// ===============================
+
+router.post("/", async (req, res) => {
 
     try {
 
-      const project = await prisma.projects.create({
-    data:{
-        created_by_admin_id: req.body.created_by_admin_id,
-        supervisor_id: req.body.supervisor_id,
-        title: req.body.title,
-        description: req.body.description,
-        start_date: new Date(req.body.start_date),
-        end_date: new Date(req.body.end_date)
-    }
-});
+        const project = await prisma.projects.create({
 
-        res.json(project);
+            data: {
 
-    } catch(error){
+                created_by_admin_id: req.body.created_by_admin_id,
 
-        res.status(500).json({
-            error:error.message
-        });
+                supervisor_id: req.body.supervisor_id,
 
-    }
+                title: req.body.title,
 
-});
+                description: req.body.description,
 
+                start_date: new Date(req.body.start_date),
 
-// UPDATE PROJECT
-router.put("/:id", async(req,res)=>{
+                end_date: new Date(req.body.end_date)
 
-    try{
-
-        const project = await prisma.projects.update({
-
-            where:{
-                id:Number(req.params.id)
-            },
-
-            data:{
-                name:req.body.name,
-                description:req.body.description
             }
 
         });
@@ -115,10 +128,10 @@ router.put("/:id", async(req,res)=>{
         res.json(project);
 
 
-    }catch(error){
+    } catch (error) {
 
         res.status(500).json({
-            error:error.message
+            error: error.message
         });
 
     }
@@ -126,6 +139,93 @@ router.put("/:id", async(req,res)=>{
 });
 
 
+
+
+// ===============================
+// UPDATE PROJECT
+// ===============================
+
+router.put("/:id", async (req, res) => {
+
+    try {
+
+
+        const project = await prisma.projects.update({
+
+            where: {
+                id: Number(req.params.id)
+            },
+
+
+            data: {
+
+                title: req.body.title,
+
+                description: req.body.description,
+
+                start_date: new Date(req.body.start_date),
+
+                end_date: new Date(req.body.end_date)
+
+            }
+
+        });
+
+
+        res.json(project);
+
+
+
+    } catch (error) {
+
+        res.status(500).json({
+            error: error.message
+        });
+
+    }
+
+});
+
+
+
+
+// ===============================
+// DELETE PROJECT
+// ===============================
+
+router.delete("/:id", async (req, res) => {
+
+    try {
+
+
+        const project = await prisma.projects.delete({
+
+            where: {
+                id: Number(req.params.id)
+            }
+
+        });
+
+
+        res.json({
+
+            message: "Project deleted successfully",
+
+            project
+
+        });
+
+
+
+    } catch (error) {
+
+        res.status(500).json({
+            error: error.message
+        });
+
+    }
+
+});
 
 
 

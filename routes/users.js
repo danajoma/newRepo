@@ -18,17 +18,22 @@ const prisma = new PrismaClient({
 
 // GET ALL USERS
 router.get("/", async (req, res) => {
+
     try {
+
         const users = await prisma.users.findMany();
 
         res.json(users);
 
     } catch (error) {
-        console.log(error);
-        res.status(500).json({ error: error.message });
-    }
-});
 
+        res.status(500).json({
+            error: error.message
+        });
+
+    }
+
+});
 
 
 // CREATE USER
@@ -37,12 +42,14 @@ router.post("/", async (req, res) => {
     try {
 
         const user = await prisma.users.create({
+
             data: {
                 name: req.body.name,
                 email: req.body.email,
                 password: req.body.password,
                 role: req.body.role
             }
+
         });
 
         res.json(user);
@@ -57,4 +64,100 @@ router.post("/", async (req, res) => {
 
 });
 
+
+// GET USER BY ID
+router.get("/:id", async (req, res) => {
+
+    try {
+
+        const user = await prisma.users.findUnique({
+
+            where: {
+                id: Number(req.params.id)
+            }
+
+        });
+
+
+        res.json(user);
+
+
+    } catch(error) {
+
+        res.status(500).json({
+            error:error.message
+        });
+
+    }
+
+});
+
+
+// UPDATE USER
+router.put("/:id", async (req,res)=>{
+
+    try {
+
+        const user = await prisma.users.update({
+
+            where:{
+                id:Number(req.params.id)
+            },
+
+            data:{
+                name:req.body.name,
+                email:req.body.email,
+                password:req.body.password,
+                role:req.body.role
+            }
+
+        });
+
+
+        res.json(user);
+
+
+    } catch(error){
+
+        res.status(500).json({
+            error:error.message
+        });
+
+    }
+
+});
+
+
+// DELETE USER
+router.delete("/:id", async(req,res)=>{
+
+    try {
+
+        const user = await prisma.users.delete({
+
+            where:{
+                id:Number(req.params.id)
+            }
+
+        });
+
+
+        res.json({
+            message:"User deleted",
+            user
+        });
+
+
+    } catch(error){
+
+        res.status(500).json({
+            error:error.message
+        });
+
+    }
+
+});
+
+
+// لازم يكون آخر شيء
 module.exports = router;
