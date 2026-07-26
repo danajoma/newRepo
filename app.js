@@ -26,6 +26,22 @@ const admintRoutes = require("./routes/admins");
 
 app.use("/admins", admintRoutes);
 
+
+const supervisorsRouter = require("./routes/supervisors");
+app.use("/supervisors", supervisorsRouter);
+
+
+const internsRouter = require("./routes/interns");
+app.use("/interns", internsRouter);
+
+
+const tasksRouter = require("./routes/tasks");
+app.use("/tasks", tasksRouter);
+
+const feedbacksRouter = require("./routes/feedbacks");
+app.use("/feedbacks", feedbacksRouter);
+
+
 app.listen(3000,()=>{
     console.log("Server running on port 3000");
 });

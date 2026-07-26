@@ -1,3 +1,4 @@
+const taskSchema = require("../validation/task.validation");
 const express = require("express");
 
 const router = express.Router();
@@ -16,27 +17,32 @@ const prisma = new PrismaClient({
 });
 
 
+
 // =========================
-// GET ALL ADMINS
+// GET ALL TASKS
 // =========================
 
-router.get("/", async (req, res) => {
+router.get("/", async (req,res)=>{
 
     try {
 
-        const admins = await prisma.admins.findMany({
+
+        const tasks = await prisma.tasks.findMany({
+
             include:{
-                user:true,
-                projects:true,
-                supervisors:true,
-                interns:true
+                project:true,
+                intern:true,
+                feedbacks:true
             }
+
         });
 
-        res.json(admins);
+
+        res.json(tasks);
 
 
-    } catch(error) {
+
+    }catch(error){
 
         res.status(500).json({
             error:error.message
@@ -47,43 +53,51 @@ router.get("/", async (req, res) => {
 });
 
 
+
+
+
 // =========================
-// GET ADMIN BY ID
+// GET TASK BY ID
 // =========================
 
-router.get("/:id", async (req,res)=>{
+router.get("/:id", async(req,res)=>{
+
 
     try {
 
-        const admin = await prisma.admins.findUnique({
+
+        const task = await prisma.tasks.findUnique({
 
             where:{
                 id:Number(req.params.id)
             },
 
+
             include:{
-                user:true,
-                projects:true,
-                supervisors:true,
-                interns:true
+                project:true,
+                intern:true,
+                feedbacks:true
             }
 
         });
 
 
-        if(!admin){
+
+        if(!task){
 
             return res.status(404).json({
-                error:"Admin not found"
+                error:"Task not found"
             });
 
         }
 
 
-        res.json(admin);
+        res.json(task);
+
 
 
     }catch(error){
+
 
         res.status(500).json({
             error:error.message
@@ -91,93 +105,150 @@ router.get("/:id", async (req,res)=>{
 
     }
 
+
 });
 
 
+
+
+
 // =========================
-// CREATE ADMIN
+// CREATE TASK
 // =========================
 
 router.post("/", async(req,res)=>{
 
+
     try {
 
+const result = taskSchema.safeParse(req.body);
 
-        const admin = await prisma.admins.create({
+
+if(!result.success){
+
+    return res.status(400).json({
+
+        error: result.error.errors
+
+    });
+
+}
+
+        const task = await prisma.tasks.create({
 
             data:{
 
-                id:req.body.id,
 
-                experience_years:req.body.experience_years
+                project_id:req.body.project_id,
+
+                intern_id:req.body.intern_id,
+
+                title:req.body.title,
+
+                description:req.body.description,
+
+                status:req.body.status,
+
+                deadline:new Date(req.body.deadline)
+
 
             }
 
         });
+ 
 
 
-        res.json(admin);
+        res.json(task);
+
 
 
     }catch(error){
+
 
         res.status(500).json({
             error:error.message
         });
 
+
     }
+
 
 });
 
 
+
+
+
+
 // =========================
-// UPDATE ADMIN
+// UPDATE TASK
 // =========================
 
 router.put("/:id", async(req,res)=>{
 
+
     try {
 
 
-        const admin = await prisma.admins.update({
+        const task = await prisma.tasks.update({
 
             where:{
                 id:Number(req.params.id)
             },
 
+
             data:{
 
-                experience_years:req.body.experience_years
+
+                title:req.body.title,
+
+                description:req.body.description,
+
+                status:req.body.status,
+
+                deadline:new Date(req.body.deadline)
+
 
             }
+
 
         });
 
 
-        res.json(admin);
+
+        res.json(task);
+
 
 
     }catch(error){
+
 
         res.status(500).json({
             error:error.message
         });
 
+
     }
+
 
 });
 
 
+
+
+
+
 // =========================
-// DELETE ADMIN
+// DELETE TASK
 // =========================
 
 router.delete("/:id", async(req,res)=>{
 
+
     try {
 
 
-        const admin = await prisma.admins.delete({
+        const task = await prisma.tasks.delete({
 
             where:{
                 id:Number(req.params.id)
@@ -186,23 +257,31 @@ router.delete("/:id", async(req,res)=>{
         });
 
 
+
         res.json({
 
-            message:"Admin deleted successfully",
-            admin
+            message:"Task deleted successfully",
+
+            task
 
         });
 
 
+
     }catch(error){
+
 
         res.status(500).json({
             error:error.message
         });
 
+
     }
 
+
 });
+
+
 
 
 

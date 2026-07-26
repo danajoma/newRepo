@@ -17,23 +17,26 @@ const prisma = new PrismaClient({
 
 
 // =========================
-// GET ALL ADMINS
+// GET ALL INTERNS
 // =========================
 
 router.get("/", async (req, res) => {
 
     try {
 
-        const admins = await prisma.admins.findMany({
+        const interns = await prisma.interns.findMany({
+
             include:{
                 user:true,
-                projects:true,
-                supervisors:true,
-                interns:true
+                admin:true,
+                tasks:true,
+                feedbacks:true
             }
+
         });
 
-        res.json(admins);
+
+        res.json(interns);
 
 
     } catch(error) {
@@ -47,55 +50,65 @@ router.get("/", async (req, res) => {
 });
 
 
+
+
 // =========================
-// GET ADMIN BY ID
+// GET INTERN BY ID
 // =========================
 
-router.get("/:id", async (req,res)=>{
+router.get("/:id", async(req,res)=>{
 
     try {
 
-        const admin = await prisma.admins.findUnique({
+
+        const intern = await prisma.interns.findUnique({
 
             where:{
                 id:Number(req.params.id)
             },
 
+
             include:{
                 user:true,
-                projects:true,
-                supervisors:true,
-                interns:true
+                admin:true,
+                tasks:true,
+                feedbacks:true
             }
 
         });
 
 
-        if(!admin){
+
+        if(!intern){
 
             return res.status(404).json({
-                error:"Admin not found"
+                error:"Intern not found"
             });
 
         }
 
 
-        res.json(admin);
+        res.json(intern);
+
 
 
     }catch(error){
 
+
         res.status(500).json({
             error:error.message
         });
+
 
     }
 
 });
 
 
+
+
 // =========================
-// CREATE ADMIN
+// CREATE INTERN
 // =========================
 
 router.post("/", async(req,res)=>{
@@ -103,81 +116,108 @@ router.post("/", async(req,res)=>{
     try {
 
 
-        const admin = await prisma.admins.create({
+        const intern = await prisma.interns.create({
 
             data:{
 
                 id:req.body.id,
 
-                experience_years:req.body.experience_years
+                admin_id:req.body.admin_id,
+
+                university:req.body.university,
+
+                major:req.body.major,
+
+                attendance_ratio:req.body.attendance_ratio
 
             }
 
         });
 
 
-        res.json(admin);
+
+        res.json(intern);
+
 
 
     }catch(error){
 
+
         res.status(500).json({
             error:error.message
         });
+
 
     }
 
 });
 
 
+
+
 // =========================
-// UPDATE ADMIN
+// UPDATE INTERN
 // =========================
 
 router.put("/:id", async(req,res)=>{
 
+
     try {
 
 
-        const admin = await prisma.admins.update({
+        const intern = await prisma.interns.update({
 
             where:{
                 id:Number(req.params.id)
             },
 
+
             data:{
 
-                experience_years:req.body.experience_years
+                admin_id:req.body.admin_id,
+
+                university:req.body.university,
+
+                major:req.body.major,
+
+                attendance_ratio:req.body.attendance_ratio
 
             }
 
         });
 
 
-        res.json(admin);
+        res.json(intern);
+
 
 
     }catch(error){
 
+
         res.status(500).json({
             error:error.message
         });
+
 
     }
 
 });
 
 
+
+
+
 // =========================
-// DELETE ADMIN
+// DELETE INTERN
 // =========================
 
 router.delete("/:id", async(req,res)=>{
 
+
     try {
 
 
-        const admin = await prisma.admins.delete({
+        const intern = await prisma.interns.delete({
 
             where:{
                 id:Number(req.params.id)
@@ -188,17 +228,21 @@ router.delete("/:id", async(req,res)=>{
 
         res.json({
 
-            message:"Admin deleted successfully",
-            admin
+            message:"Intern deleted successfully",
+
+            intern
 
         });
+
 
 
     }catch(error){
 
+
         res.status(500).json({
             error:error.message
         });
+
 
     }
 

@@ -17,23 +17,26 @@ const prisma = new PrismaClient({
 
 
 // =========================
-// GET ALL ADMINS
+// GET ALL SUPERVISORS
 // =========================
 
 router.get("/", async (req, res) => {
 
     try {
 
-        const admins = await prisma.admins.findMany({
+        const supervisors = await prisma.supervisors.findMany({
+
             include:{
                 user:true,
+                admin:true,
                 projects:true,
-                supervisors:true,
-                interns:true
+                feedbacks:true
             }
+
         });
 
-        res.json(admins);
+
+        res.json(supervisors);
 
 
     } catch(error) {
@@ -47,55 +50,63 @@ router.get("/", async (req, res) => {
 });
 
 
+
 // =========================
-// GET ADMIN BY ID
+// GET SUPERVISOR BY ID
 // =========================
 
-router.get("/:id", async (req,res)=>{
+router.get("/:id", async(req,res)=>{
 
     try {
 
-        const admin = await prisma.admins.findUnique({
+
+        const supervisor = await prisma.supervisors.findUnique({
 
             where:{
                 id:Number(req.params.id)
             },
 
+
             include:{
                 user:true,
+                admin:true,
                 projects:true,
-                supervisors:true,
-                interns:true
+                feedbacks:true
             }
 
         });
 
 
-        if(!admin){
+
+        if(!supervisor){
 
             return res.status(404).json({
-                error:"Admin not found"
+                error:"Supervisor not found"
             });
 
         }
 
 
-        res.json(admin);
+        res.json(supervisor);
+
 
 
     }catch(error){
 
+
         res.status(500).json({
             error:error.message
         });
+
 
     }
 
 });
 
 
+
 // =========================
-// CREATE ADMIN
+// CREATE SUPERVISOR
 // =========================
 
 router.post("/", async(req,res)=>{
@@ -103,81 +114,98 @@ router.post("/", async(req,res)=>{
     try {
 
 
-        const admin = await prisma.admins.create({
+        const supervisor = await prisma.supervisors.create({
 
             data:{
 
                 id:req.body.id,
 
-                experience_years:req.body.experience_years
+                admin_id:req.body.admin_id,
+
+                company:req.body.company
 
             }
 
         });
 
 
-        res.json(admin);
+
+        res.json(supervisor);
+
 
 
     }catch(error){
 
+
         res.status(500).json({
             error:error.message
         });
+
 
     }
 
 });
 
 
+
 // =========================
-// UPDATE ADMIN
+// UPDATE SUPERVISOR
 // =========================
 
 router.put("/:id", async(req,res)=>{
 
+
     try {
 
 
-        const admin = await prisma.admins.update({
+        const supervisor = await prisma.supervisors.update({
 
             where:{
                 id:Number(req.params.id)
             },
 
+
             data:{
 
-                experience_years:req.body.experience_years
+                admin_id:req.body.admin_id,
+
+                company:req.body.company
 
             }
 
         });
 
 
-        res.json(admin);
+        res.json(supervisor);
+
 
 
     }catch(error){
 
+
         res.status(500).json({
             error:error.message
         });
+
 
     }
 
 });
 
 
+
+
 // =========================
-// DELETE ADMIN
+// DELETE SUPERVISOR
 // =========================
 
 router.delete("/:id", async(req,res)=>{
 
+
     try {
 
 
-        const admin = await prisma.admins.delete({
+        const supervisor = await prisma.supervisors.delete({
 
             where:{
                 id:Number(req.params.id)
@@ -188,17 +216,21 @@ router.delete("/:id", async(req,res)=>{
 
         res.json({
 
-            message:"Admin deleted successfully",
-            admin
+            message:"Supervisor deleted successfully",
+
+            supervisor
 
         });
+
 
 
     }catch(error){
 
+
         res.status(500).json({
             error:error.message
         });
+
 
     }
 

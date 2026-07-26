@@ -103,6 +103,16 @@ router.get("/:id", async (req, res) => {
 router.post("/", async (req, res) => {
 
     try {
+        const result = userSchema.safeParse(req.body);
+
+
+if(!result.success){
+
+    return res.status(400).json({
+        error: result.error.errors
+    });
+
+}
 
         const project = await prisma.projects.create({
 

@@ -1,6 +1,7 @@
 const express = require("express");
 
 const router = express.Router();
+const feedbackSchema = require("../validation/feedback.validation");
 
 const { PrismaClient } = require("../generated/prisma");
 const { PrismaPg } = require("@prisma/adapter-pg");
@@ -16,168 +17,244 @@ const prisma = new PrismaClient({
 });
 
 
+
+
 // =========================
-// GET ALL ADMINS
+// GET ALL FEEDBACKS
 // =========================
 
-router.get("/", async (req, res) => {
+router.get("/", async (req,res)=>{
 
     try {
 
-        const admins = await prisma.admins.findMany({
+
+        const feedbacks = await prisma.feedbacks.findMany({
+
             include:{
-                user:true,
-                projects:true,
-                supervisors:true,
-                interns:true
+                task:true,
+                intern:true,
+                supervisor:true
             }
+
         });
 
-        res.json(admins);
+
+        res.json(feedbacks);
 
 
-    } catch(error) {
+
+    }catch(error){
+
 
         res.status(500).json({
             error:error.message
         });
+
 
     }
 
 });
 
 
+
+
+
+
 // =========================
-// GET ADMIN BY ID
+// GET FEEDBACK BY ID
 // =========================
 
-router.get("/:id", async (req,res)=>{
+router.get("/:id", async(req,res)=>{
+
 
     try {
 
-        const admin = await prisma.admins.findUnique({
+
+        const feedback = await prisma.feedbacks.findUnique({
 
             where:{
                 id:Number(req.params.id)
             },
 
+
             include:{
-                user:true,
-                projects:true,
-                supervisors:true,
-                interns:true
+                task:true,
+                intern:true,
+                supervisor:true
             }
+
 
         });
 
 
-        if(!admin){
+
+        if(!feedback){
 
             return res.status(404).json({
-                error:"Admin not found"
+                error:"Feedback not found"
             });
 
         }
 
 
-        res.json(admin);
+        res.json(feedback);
+
 
 
     }catch(error){
+
 
         res.status(500).json({
             error:error.message
         });
 
+
     }
+
 
 });
 
 
+
+
+
+
+
 // =========================
-// CREATE ADMIN
+// CREATE FEEDBACK
 // =========================
 
 router.post("/", async(req,res)=>{
 
+
     try {
+const result = feedbackschema.safeParse(req.body);
 
 
-        const admin = await prisma.admins.create({
+if(!result.success){
+
+    return res.status(400).json({
+        error:result.error.errors
+    });
+
+}
+
+        const feedback = await prisma.feedback.create({
 
             data:{
 
-                id:req.body.id,
 
-                experience_years:req.body.experience_years
+                task_id:req.body.task_id,
+
+                intern_id:req.body.intern_id,
+
+                supervisor_id:req.body.supervisor_id,
+
+                comment:req.body.comment,
+
+                rating:req.body.rating,
+
+                date:new Date(req.body.date)
+
 
             }
 
         });
 
 
-        res.json(admin);
+
+        res.json(feedback);
+
 
 
     }catch(error){
+
 
         res.status(500).json({
             error:error.message
         });
 
+
     }
+
 
 });
 
 
+
+
+
+
+
 // =========================
-// UPDATE ADMIN
+// UPDATE FEEDBACK
 // =========================
 
 router.put("/:id", async(req,res)=>{
 
+
     try {
 
 
-        const admin = await prisma.admins.update({
+        const feedback = await prisma.feedbacks.update({
 
             where:{
                 id:Number(req.params.id)
             },
 
+
             data:{
 
-                experience_years:req.body.experience_years
+
+                comment:req.body.comment,
+
+                rating:req.body.rating,
+
+                date:new Date(req.body.date)
+
 
             }
+
 
         });
 
 
-        res.json(admin);
+
+        res.json(feedback);
+
 
 
     }catch(error){
+
 
         res.status(500).json({
             error:error.message
         });
 
+
     }
+
 
 });
 
 
+
+
+
+
+
+
 // =========================
-// DELETE ADMIN
+// DELETE FEEDBACK
 // =========================
 
 router.delete("/:id", async(req,res)=>{
 
+
     try {
 
 
-        const admin = await prisma.admins.delete({
+        const feedback = await prisma.feedbacks.delete({
 
             where:{
                 id:Number(req.params.id)
@@ -186,23 +263,31 @@ router.delete("/:id", async(req,res)=>{
         });
 
 
+
         res.json({
 
-            message:"Admin deleted successfully",
-            admin
+            message:"Feedback deleted successfully",
+
+            feedback
 
         });
 
 
+
     }catch(error){
+
 
         res.status(500).json({
             error:error.message
         });
 
+
     }
 
+
 });
+
+
 
 
 

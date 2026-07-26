@@ -2,6 +2,7 @@ const express = require("express");
 
 const router = express.Router();
 
+const userSchema = require("../validation/user.validation");
 const { PrismaClient } = require('../generated/prisma');
 const { PrismaPg } = require('@prisma/adapter-pg');
 
