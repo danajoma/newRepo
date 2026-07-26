@@ -7,83 +7,103 @@ datasource db {
   provider = "postgresql"
 }
 
-model admins {
-  id               Int           @id
-  experience_years Int?
-  users            users         @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  interns          interns[]
-  projects         projects[]
-  supervisors      supervisors[]
+
+
+model Users {
+  id       Int    @id @default(autoincrement())
+  name     String
+  email    String @unique
+  password String
+  role     String
+
+  admin        Admins?
+  supervisor   Supervisors?
+  intern       Interns?
 }
 
-model feedbacks {
-  id            Int          @id @default(autoincrement())
-  task_id       Int?
-  intern_id     Int?
-  supervisor_id Int?
-  comment       String?
-  rating        Int?
-  date          DateTime?    @db.Date
-  interns       interns?     @relation(fields: [intern_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  supervisors   supervisors? @relation(fields: [supervisor_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  tasks         tasks?       @relation(fields: [task_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+model Admins {
+  id                Int @id
+  experience_years  Int
+
+  user Users @relation(fields: [id], references: [id], onDelete: Cascade)
+
+  supervisors Supervisors[]
+  interns     Interns[]
+  projects    Projects[]
 }
 
-model interns {
-  id               Int         @id
-  admin_id         Int?
-  university       String?     @db.VarChar(100)
-  major            String?     @db.VarChar(100)
-  attendance_ratio Int?
-  feedbacks        feedbacks[]
-  admins           admins?     @relation(fields: [admin_id], references: [id], onUpdate: NoAction)
-  users            users       @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  tasks            tasks[]
-}
-
-model projects {
-  id                  Int          @id @default(autoincrement())
-  created_by_admin_id Int?
-  supervisor_id       Int?
-  title               String?      @db.VarChar(100)
-  description         String?
-  start_date          DateTime?    @db.Date
-  end_date            DateTime?    @db.Date
-  admins              admins?      @relation(fields: [created_by_admin_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  supervisors         supervisors? @relation(fields: [supervisor_id], references: [id], onUpdate: NoAction)
-  tasks               tasks[]
-}
-
-model supervisors {
-  id        Int         @id
+model Supervisors {
+  id        Int @id
   admin_id  Int?
-  company   String?     @db.VarChar(100)
-  feedbacks feedbacks[]
-  projects  projects[]
-  admins    admins?     @relation(fields: [admin_id], references: [id], onUpdate: NoAction)
-  users     users       @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  company   String
+
+  user Users @relation(fields: [id], references: [id], onDelete: Cascade)
+
+  admin Admins? @relation(fields: [admin_id], references: [id], onDelete: SetNull)
+
+  projects  Projects[]
+  feedbacks Feedbacks[]
 }
 
-model tasks {
-  id          Int         @id @default(autoincrement())
-  project_id  Int?
-  intern_id   Int?
-  title       String?     @db.VarChar(100)
-  description String?
-  status      String?     @db.VarChar(50)
-  deadline    DateTime?   @db.Date
-  feedbacks   feedbacks[]
-  interns     interns?    @relation(fields: [intern_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  projects    projects?   @relation(fields: [project_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+model Interns {
+  id                Int @id
+  admin_id          Int?
+  university        String
+  major             String
+  attendance_ratio  Int
+
+  user Users @relation(fields: [id], references: [id], onDelete: Cascade)
+
+  admin Admins? @relation(fields: [admin_id], references: [id], onDelete: SetNull)
+
+  tasks      Tasks[]
+  feedbacks  Feedbacks[]
 }
 
-model users {
-  id          Int          @id @default(autoincrement())
-  name        String?      @db.VarChar(100)
-  email       String?      @unique @db.VarChar(100)
-  password    String?      @db.VarChar(255)
-  role        String?      @db.VarChar(50)
-  admins      admins?
-  interns     interns?
-  supervisors supervisors?
+model Projects {
+  id                   Int      @id @default(autoincrement())
+  created_by_admin_id  Int
+  supervisor_id        Int?
+  title                String
+  description          String
+  start_date           DateTime
+  end_date             DateTime
+
+  admin Admins @relation(fields: [created_by_admin_id], references: [id], onDelete: Cascade)
+
+  supervisor Supervisors? @relation(fields: [supervisor_id], references: [id], onDelete: SetNull)
+
+  tasks Tasks[]
+}
+
+model Tasks {
+  id          Int      @id @default(autoincrement())
+  project_id  Int
+  intern_id   Int
+  title       String
+  description String
+  status      String
+  deadline    DateTime
+
+  project Projects @relation(fields: [project_id], references: [id], onDelete: Cascade)
+
+  intern Interns @relation(fields: [intern_id], references: [id], onDelete: Cascade)
+
+  feedbacks Feedbacks[]
+}
+
+model Feedbacks {
+  id            Int      @id @default(autoincrement())
+  task_id       Int
+  intern_id     Int
+  supervisor_id Int
+  comment       String
+  rating        Int
+  date          DateTime
+
+  task Tasks @relation(fields: [task_id], references: [id], onDelete: Cascade)
+
+  intern Interns @relation(fields: [intern_id], references: [id], onDelete: Cascade)
+
+  supervisor Supervisors @relation(fields: [supervisor_id], references: [id], onDelete: Cascade)
 }
