@@ -3,11 +3,11 @@ const { z } = require("zod");
 
 const feedbackSchema = z.object({
 
-    task_id:z.number(),
+    task_id:z.number().positive(),
 
-    intern_id:z.number(),
+    intern_id:z.number().positive(),
 
-    supervisor_id:z.number(),
+    supervisor_id:z.number().positive(),
 
     comment:z.string(),
 
@@ -15,7 +15,7 @@ const feedbackSchema = z.object({
         .min(1)
         .max(5),
 
-    date:z.string()
+    date:z.string().date()
 
 });
 
