@@ -4,7 +4,9 @@ const router = express.Router();
 
 const { PrismaClient } = require("../generated/prisma");
 const { PrismaPg } = require("@prisma/adapter-pg");
+ 
 
+const { projectSchema } = require("../validation/project.validation");
 
 const adapter = new PrismaPg({
     connectionString: process.env.DATABASE_URL
@@ -103,7 +105,7 @@ router.get("/:id", async (req, res) => {
 router.post("/", async (req, res) => {
 
     try {
-        const result = userSchema.safeParse(req.body);
+        const result = projectSchema.safeParse(req.body);
 
 
 if(!result.success){

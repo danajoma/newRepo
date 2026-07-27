@@ -20,4 +20,4 @@ const feedbackSchema = z.object({
 });
 
 
-module.exports = feedbackSchema;
+module.exports = { feedbackSchema };
