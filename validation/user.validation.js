@@ -9,7 +9,7 @@ const userSchema = z.object({
 
     email: z.string()
         .email("Invalid email"),
-
+// اعدل ع محتوى الباسووود ل يكون أأمن 
     password: z.string()
     .length(8, "Password must be exactly 8 characters"),
 

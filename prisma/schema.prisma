@@ -7,8 +7,6 @@ datasource db {
   provider = "postgresql"
 }
 
-
-
 model Users {
   id       Int    @id @default(autoincrement())
   name     String
@@ -16,14 +14,14 @@ model Users {
   password String
   role     String
 
-  admin        Admins?
-  supervisor   Supervisors?
-  intern       Interns?
+  admin      Admins?
+  supervisor Supervisors?
+  intern     Interns?
 }
 
 model Admins {
-  id                Int @id
-  experience_years  Int
+  id               Int @id
+  experience_years Int
 
   user Users @relation(fields: [id], references: [id], onDelete: Cascade)
 
@@ -33,9 +31,9 @@ model Admins {
 }
 
 model Supervisors {
-  id        Int @id
-  admin_id  Int?
-  company   String
+  id       Int    @id
+  admin_id Int?
+  company  String
 
   user Users @relation(fields: [id], references: [id], onDelete: Cascade)
 
@@ -46,28 +44,28 @@ model Supervisors {
 }
 
 model Interns {
-  id                Int @id
-  admin_id          Int?
-  university        String
-  major             String
-  attendance_ratio  Int
+  id               Int    @id
+  admin_id         Int?
+  university       String
+  major            String
+  attendance_ratio Int
 
   user Users @relation(fields: [id], references: [id], onDelete: Cascade)
 
   admin Admins? @relation(fields: [admin_id], references: [id], onDelete: SetNull)
 
-  tasks      Tasks[]
-  feedbacks  Feedbacks[]
+  submissions Submission[]
+  feedbacks   Feedbacks[]
 }
 
 model Projects {
-  id                   Int      @id @default(autoincrement())
-  created_by_admin_id  Int
-  supervisor_id        Int?
-  title                String
-  description          String
-  start_date           DateTime
-  end_date             DateTime
+  id                  Int      @id @default(autoincrement())
+  created_by_admin_id Int
+  supervisor_id       Int?
+  title               String
+  description         String
+  start_date          DateTime
+  end_date            DateTime
 
   admin Admins @relation(fields: [created_by_admin_id], references: [id], onDelete: Cascade)
 
@@ -79,7 +77,6 @@ model Projects {
 model Tasks {
   id          Int      @id @default(autoincrement())
   project_id  Int
-  intern_id   Int
   title       String
   description String
   status      String
@@ -87,9 +84,8 @@ model Tasks {
 
   project Projects @relation(fields: [project_id], references: [id], onDelete: Cascade)
 
-  intern Interns @relation(fields: [intern_id], references: [id], onDelete: Cascade)
-
-  feedbacks Feedbacks[]
+  submissions Submission[]
+  feedbacks   Feedbacks[]
 }
 
 model Feedbacks {
@@ -106,4 +102,17 @@ model Feedbacks {
   intern Interns @relation(fields: [intern_id], references: [id], onDelete: Cascade)
 
   supervisor Supervisors @relation(fields: [supervisor_id], references: [id], onDelete: Cascade)
+}
+
+model Submission {
+  id Int @id @default(autoincrement())
+
+  intern_id Int
+  task_id   Int
+
+  submission_date DateTime
+
+  intern Interns @relation(fields: [intern_id], references: [id], onDelete: Cascade)
+
+  task Tasks @relation(fields: [task_id], references: [id], onDelete: Cascade)
 }
