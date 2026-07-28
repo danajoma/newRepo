@@ -10,9 +10,9 @@ const projectSchema = z.object({
 
     description: z.string(),
 
-    start_date: z.string().data(),
+    start_date: z.string().date(),
 
-    end_date: z.string().data()
+    end_date: z.string().date()
 
 });
 
