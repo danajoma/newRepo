@@ -20,7 +20,9 @@ const taskSchema = z.object({
     status: z.enum([
         "TODO",
         "IN_PROGRESS",
-        "COMPLETED"
+        "COMPLETED",
+        "Cancel",
+        "Testing"
     ]),
 
 
