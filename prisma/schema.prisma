@@ -108,9 +108,13 @@ model Submission {
   id Int @id @default(autoincrement())
 
   intern_id Int
-  task_id   Int
+  task_id Int
 
   submission_date DateTime
+
+  status String
+
+  file_url String?
 
   intern Interns @relation(fields: [intern_id], references: [id], onDelete: Cascade)
 

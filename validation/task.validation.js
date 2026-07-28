@@ -6,8 +6,7 @@ const taskSchema = z.object({
     project_id: z.number()
         .positive(),
 
-    intern_id: z.number()
-        .positive(),
+   
 
     title: z.string()
         .min(3, "Title must be at least 3 characters")

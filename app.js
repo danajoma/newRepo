@@ -42,6 +42,10 @@ app.use("/tasks", tasksRouter);
 const feedbacksRouter = require("./routes/feedbacks");
 app.use("/feedbacks", feedbacksRouter);
 
+const submissionRouter = require("./routes/submission");
+app.use("/submission", submissionRouter);
+
+
 
 app.listen(3000,()=>{
     console.log("Server running on port 3000");

@@ -30,9 +30,7 @@ router.get("/", async (req,res)=>{
         const tasks = await prisma.tasks.findMany({
 
             include:{
-                project:true,
-                intern:true,
-                feedbacks:true
+                
             }
 
         });
@@ -75,7 +73,7 @@ router.get("/:id", async(req,res)=>{
 
             include:{
                 project:true,
-                intern:true,
+              
                 feedbacks:true
             }
 
@@ -141,8 +139,7 @@ if(!result.success){
 
                 project_id:req.body.project_id,
 
-                intern_id:req.body.intern_id,
-
+                
                 title:req.body.title,
 
                 description:req.body.description,

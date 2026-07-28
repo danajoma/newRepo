@@ -29,7 +29,6 @@ router.get("/", async (req, res) => {
             include:{
                 user:true,
                 admin:true,
-                tasks:true,
                 feedbacks:true
             }
 
@@ -71,7 +70,6 @@ router.get("/:id", async(req,res)=>{
             include:{
                 user:true,
                 admin:true,
-                tasks:true,
                 feedbacks:true
             }
 
