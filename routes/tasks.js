@@ -16,13 +16,17 @@ const prisma = new PrismaClient({
     adapter
 });
 
+const authMiddleware = require("../middleware/auth.middleware");
+
+const allowRoles = require("../middleware/role.middleware");
 
 
 // =========================
 // GET ALL TASKS
 // =========================
 
-router.get("/", async (req,res)=>{
+router.get("/", authMiddleware,
+allowRoles("ADMIN","SUPERVISOR"), async (req,res)=>{
 
     try {
 
@@ -58,7 +62,8 @@ router.get("/", async (req,res)=>{
 // GET TASK BY ID
 // =========================
 
-router.get("/:id", async(req,res)=>{
+router.get("/:id",authMiddleware,
+    allowRoles("ADMIN","SUPERVISOR"),  async(req,res)=>{
 
 
     try {
@@ -114,7 +119,8 @@ router.get("/:id", async(req,res)=>{
 // CREATE TASK
 // =========================
 
-router.post("/", async(req,res)=>{
+router.post("/",authMiddleware,
+allowRoles("SUPERVISOR"), async(req,res)=>{
 
 
     try {
@@ -128,6 +134,29 @@ if(!result.success){
 
         error: result.error.errors
 
+    });
+
+}
+
+const project = await prisma.projects.findUnique({
+
+    where:{
+        id:req.body.project_id
+    }
+
+});
+
+if(!project){
+
+    return res.status(404).json({
+        message:"Project not found"
+    });
+
+}
+if(project.supervisor_id !== req.user.id){
+
+    return res.status(403).json({
+        message:"You cannot create task for this project"
     });
 
 }
@@ -181,21 +210,54 @@ if(!result.success){
 // UPDATE TASK
 // =========================
 
-router.put("/:id", async(req,res)=>{
-
+router.put(
+    "/:id",
+    authMiddleware,
+    allowRoles("SUPERVISOR"),
+    async(req,res)=>{
 
     try {
 
 
-        const task = await prisma.tasks.update({
+        const task = await prisma.tasks.findUnique({
 
             where:{
                 id:Number(req.params.id)
             },
 
+            include:{
+                project:true
+            }
+
+        });
+
+
+        if(!task){
+
+            return res.status(404).json({
+                message:"Task not found"
+            });
+
+        }
+
+
+        if(task.project.supervisor_id !== req.user.id){
+
+            return res.status(403).json({
+                message:"You cannot update this task"
+            });
+
+        }
+
+
+
+        const updatedTask = await prisma.tasks.update({
+
+            where:{
+                id:Number(req.params.id)
+            },
 
             data:{
-
 
                 title:req.body.title,
 
@@ -205,25 +267,21 @@ router.put("/:id", async(req,res)=>{
 
                 deadline:new Date(req.body.deadline)
 
-
             }
-
 
         });
 
 
 
-        res.json(task);
+        res.json(updatedTask);
 
 
 
     }catch(error){
 
-
         res.status(500).json({
             error:error.message
         });
-
 
     }
 
@@ -239,33 +297,70 @@ router.put("/:id", async(req,res)=>{
 // DELETE TASK
 // =========================
 
-router.delete("/:id", async(req,res)=>{
+router.delete("/:id",authMiddleware,
+    allowRoles("SUPERVISOR"), async(req,res)=>{
 
 
     try {
 
 
-        const task = await prisma.tasks.delete({
+    const task = await prisma.tasks.findUnique({
 
-            where:{
-                id:Number(req.params.id)
-            }
+        where:{
+            id:Number(req.params.id)
+        },
 
+        include:{
+            project:true
+        }
+
+    });
+
+
+
+    if(!task){
+
+        return res.status(404).json({
+            message:"Task not found"
         });
 
+    }
 
 
-        res.json({
 
-            message:"Task deleted successfully",
+    if(task.project.supervisor_id !== req.user.id){
 
-            task
-
+        return res.status(403).json({
+            message:"You cannot delete this task"
         });
 
+    }
 
 
-    }catch(error){
+
+    const deletedTask = await prisma.tasks.delete({
+
+        where:{
+            id:Number(req.params.id)
+        }
+
+    });
+
+
+
+    res.json({
+
+        message:"Task deleted successfully",
+
+        task: deletedTask
+
+    });
+
+
+
+}
+
+    catch(error){
 
 
         res.status(500).json({

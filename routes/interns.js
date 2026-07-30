@@ -15,12 +15,18 @@ const prisma = new PrismaClient({
     adapter
 });
 
+const authMiddleware = require("../middleware/auth.middleware");
+
+const allowRoles = require("../middleware/role.middleware");
+
+
 
 // =========================
 // GET ALL INTERNS
 // =========================
 
-router.get("/", async (req, res) => {
+router.get("/", authMiddleware,
+allowRoles("ADMIN","SUPERVISOR")  , async (req, res) => {
 
     try {
 
@@ -55,7 +61,8 @@ router.get("/", async (req, res) => {
 // GET INTERN BY ID
 // =========================
 
-router.get("/:id", async(req,res)=>{
+router.get("/:id",authMiddleware,
+allowRoles("ADMIN","SUPERVISOR") , async(req,res)=>{
 
     try {
 
@@ -109,7 +116,8 @@ router.get("/:id", async(req,res)=>{
 // CREATE INTERN
 // =========================
 
-router.post("/", async(req,res)=>{
+router.post("/", authMiddleware,
+allowRoles("ADMIN","SUPERVISOR") , async(req,res)=>{
 
     try {
 
@@ -157,7 +165,8 @@ router.post("/", async(req,res)=>{
 // UPDATE INTERN
 // =========================
 
-router.put("/:id", async(req,res)=>{
+router.put("/:id",authMiddleware,
+allowRoles("ADMIN","SUPERVISOR") , async(req,res)=>{
 
 
     try {
@@ -209,7 +218,8 @@ router.put("/:id", async(req,res)=>{
 // DELETE INTERN
 // =========================
 
-router.delete("/:id", async(req,res)=>{
+router.delete("/:id",authMiddleware,
+allowRoles("ADMIN","SUPERVISOR") , async(req,res)=>{
 
 
     try {

@@ -114,7 +114,7 @@ model Submission {
 
   status String
 
-  file_url String?
+  file_url String
 
   intern Interns @relation(fields: [intern_id], references: [id], onDelete: Cascade)
 

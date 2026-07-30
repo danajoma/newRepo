@@ -10,6 +10,9 @@ const adapter = new PrismaPg({
     connectionString: process.env.DATABASE_URL
 });
 
+const authMiddleware = require("../middleware/auth.middleware");
+
+const allowRoles = require("../middleware/role.middleware"); 
 
 const prisma = new PrismaClient({
     adapter
@@ -20,7 +23,8 @@ const prisma = new PrismaClient({
 // GET ALL SUPERVISORS
 // =========================
 
-router.get("/", async (req, res) => {
+router.get("/", authMiddleware,
+allowRoles("ADMIN"), async (req, res) => {
 
     try {
 
@@ -55,7 +59,8 @@ router.get("/", async (req, res) => {
 // GET SUPERVISOR BY ID
 // =========================
 
-router.get("/:id", async(req,res)=>{
+router.get("/:id",authMiddleware,
+allowRoles("ADMIN"),  async(req,res)=>{
 
     try {
 
@@ -109,7 +114,8 @@ router.get("/:id", async(req,res)=>{
 // CREATE SUPERVISOR
 // =========================
 
-router.post("/", async(req,res)=>{
+router.post("/", authMiddleware,
+allowRoles("ADMIN"), async(req,res)=>{
 
     try {
 
@@ -152,7 +158,8 @@ router.post("/", async(req,res)=>{
 // UPDATE SUPERVISOR
 // =========================
 
-router.put("/:id", async(req,res)=>{
+router.put("/:id",authMiddleware,
+allowRoles("ADMIN"),  async(req,res)=>{
 
 
     try {
@@ -199,7 +206,8 @@ router.put("/:id", async(req,res)=>{
 // DELETE SUPERVISOR
 // =========================
 
-router.delete("/:id", async(req,res)=>{
+router.delete("/:id",authMiddleware,
+allowRoles("ADMIN"),  async(req,res)=>{
 
 
     try {

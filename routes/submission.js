@@ -18,6 +18,9 @@ const prisma = new PrismaClient({
     adapter
 });
 
+const authMiddleware = require("../middleware/auth.middleware");
+
+const allowRoles = require("../middleware/role.middleware");
 
 
 
@@ -25,7 +28,8 @@ const prisma = new PrismaClient({
 // GET ALL SUBMISSIONS
 // ===============================
 
-router.get("/", async (req, res) => {
+router.get("/", authMiddleware,
+allowRoles("ADMIN","SUPERVISOR"), async (req, res) => {
 
     try {
 
@@ -66,7 +70,8 @@ router.get("/", async (req, res) => {
 // GET SUBMISSION BY ID
 // ===============================
 
-router.get("/:id", async (req, res) => {
+router.get("/:id",authMiddleware,
+allowRoles("ADMIN","SUPERVISOR", "INTERN"),  async (req, res) => {
 
 
     try {
@@ -138,7 +143,8 @@ router.get("/:id", async (req, res) => {
 // CREATE SUBMISSION
 // ===============================
 
-router.post("/", async (req, res) => {
+router.post("/",authMiddleware,
+allowRoles("INTERN"),  async (req, res) => {
 
 
     try {
@@ -160,14 +166,29 @@ router.post("/", async (req, res) => {
 
         }
 
+const task = await prisma.tasks.findUnique({
 
+    where:{
+        id:req.body.task_id
+    }
+
+});
+
+
+if(!task){
+
+    return res.status(404).json({
+        message:"Task not found"
+    });
+
+}
 
 
        const submission = await prisma.submission.create({
 
     data: {
 
-        intern_id: req.body.intern_id,
+        intern_id: req.user.id,
 
         task_id: req.body.task_id,
 
@@ -214,41 +235,67 @@ router.post("/", async (req, res) => {
 // UPDATE SUBMISSION
 // ===============================
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", authMiddleware,
+allowRoles("INTERN"), async (req, res) => {
 
 
     try {
 
 
-      const submission = await prisma.submission.update({
+        const existingSubmission = await prisma.submission.findUnique({
 
-    where: {
+            where:{
+                id:Number(req.params.id)
+            }
 
-        id: Number(req.params.id)
-
-    },
+        });
 
 
-    data: {
 
-        intern_id: req.body.intern_id,
+        if(!existingSubmission){
 
-        task_id: req.body.task_id,
+            return res.status(404).json({
+                message:"Submission not found"
+            });
 
-        submission_date: new Date(req.body.submission_date),
-
-        status: req.body.status,
-
-        file_url: req.body.file_url
-
-    }
-
-});
+        }
 
 
 
 
-        res.json(submission);
+        if(existingSubmission.intern_id !== req.user.id){
+
+            return res.status(403).json({
+                message:"You cannot update this submission"
+            });
+
+        }
+
+
+
+
+        const updatedSubmission = await prisma.submission.update({
+
+            where: {
+
+                id: Number(req.params.id)
+
+            },
+
+
+            data: {
+
+                status: req.body.status,
+
+                file_url: req.body.file_url
+
+            }
+
+        });
+
+
+
+        res.json(updatedSubmission);
 
 
 
@@ -266,7 +313,6 @@ router.put("/:id", async (req, res) => {
 
 
 });
-
 
 
 
@@ -279,24 +325,49 @@ router.put("/:id", async (req, res) => {
 // DELETE SUBMISSION
 // ===============================
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authMiddleware,
+allowRoles("INTERN"), async(req,res)=>{
 
 
     try {
 
 
+        const existingSubmission = await prisma.submission.findUnique({
 
-        const submission = await prisma.submission.delete({
-
-
-
-            where: {
-
-                id: Number(req.params.id)
-
+            where:{
+                id:Number(req.params.id)
             }
 
+        });
 
+
+
+        if(!existingSubmission){
+
+            return res.status(404).json({
+                message:"Submission not found"
+            });
+
+        }
+
+
+
+
+        if(existingSubmission.intern_id !== req.user.id){
+
+            return res.status(403).json({
+                message:"You cannot delete this submission"
+            });
+
+        }
+
+
+
+        const deletedSubmission = await prisma.submission.delete({
+
+            where:{
+                id:Number(req.params.id)
+            }
 
         });
 
@@ -304,34 +375,27 @@ router.delete("/:id", async (req, res) => {
 
         res.json({
 
+            message:"Submission deleted successfully",
 
-            message: "Submission deleted successfully",
-
-
-            submission
-
+            submission: deletedSubmission
 
         });
 
 
 
-
-    } catch (error) {
-
+    }catch(error){
 
 
         res.status(500).json({
-
-            error: error.message
-
+            error:error.message
         });
-
 
 
     }
 
 
 });
+
 
 
 

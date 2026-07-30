@@ -5,6 +5,10 @@ const router = express.Router();
 const { PrismaClient } = require("../generated/prisma");
 const { PrismaPg } = require("@prisma/adapter-pg");
 
+const authMiddleware = require("../middleware/auth.middleware");
+
+const allowRoles = require("../middleware/role.middleware");
+
 
 const adapter = new PrismaPg({
     connectionString: process.env.DATABASE_URL
@@ -20,7 +24,8 @@ const prisma = new PrismaClient({
 // GET ALL ADMINS
 // =========================
 
-router.get("/", async (req, res) => {
+router.get("/", authMiddleware,
+allowRoles("ADMIN"), async (req, res) => {
 
     try {
 
@@ -51,7 +56,8 @@ router.get("/", async (req, res) => {
 // GET ADMIN BY ID
 // =========================
 
-router.get("/:id", async (req,res)=>{
+router.get("/:id",authMiddleware,
+allowRoles("ADMIN"),  async (req,res)=>{
 
     try {
 
@@ -98,7 +104,8 @@ router.get("/:id", async (req,res)=>{
 // CREATE ADMIN
 // =========================
 
-router.post("/", async(req,res)=>{
+router.post("/", authMiddleware,
+allowRoles("ADMIN"), async(req,res)=>{
 
     try {
 
@@ -134,7 +141,8 @@ router.post("/", async(req,res)=>{
 // UPDATE ADMIN
 // =========================
 
-router.put("/:id", async(req,res)=>{
+router.put("/:id",authMiddleware,
+allowRoles("ADMIN"),  async(req,res)=>{
 
     try {
 
@@ -172,7 +180,8 @@ router.put("/:id", async(req,res)=>{
 // DELETE ADMIN
 // =========================
 
-router.delete("/:id", async(req,res)=>{
+router.delete("/:id", authMiddleware,
+allowRoles("ADMIN"), async(req,res)=>{
 
     try {
 
