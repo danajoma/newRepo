@@ -60,41 +60,39 @@ const users = await prisma.users.findMany({
 
     where: {
 
-        AND:[
+    AND:[
 
-            search ? {
+        name ? {
 
-                OR:[
+            name:{
+                contains:name,
+                mode:"insensitive"
+            }
 
-                    {
-                        name:{
-                            contains:search,
-                            mode:"insensitive"
-                        }
-                    },
-
-                    {
-                        email:{
-                            contains:search,
-                            mode:"insensitive"
-                        }
-                    }
-
-                ]
-
-            } : {},
+        } : {},
 
 
 
-            role ? {
+        email ? {
 
-                role:role
+            email:{
+                contains:email,
+                mode:"insensitive"
+            }
 
-            } : {}
+        } : {},
 
-        ]
 
-    }
+
+        role ? {
+
+            role:role
+
+        } : {}
+
+    ]
+
+}
 
 });
 
